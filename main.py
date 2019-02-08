@@ -1,5 +1,5 @@
 import pandas as pd
-from requests import get, RequestException
+import requests
 from bs4 import BeautifulSoup
 
 def get_data(url:str) -> BeautifulSoup:
@@ -11,7 +11,7 @@ def get_data(url:str) -> BeautifulSoup:
     except RequestException as e:
         print(str(e))
     
-def get_record_entries(soup:BeautifulSoup) -> list:
+def get_record_entries(soup: BeautifulSoup) -> list:
     """
     Extracts all headers listing the different series.
     Add each record in a series to a list. 
@@ -26,7 +26,7 @@ def get_record_entries(soup:BeautifulSoup) -> list:
             rows.append([each.text, every.text])
     return rows
 
-def create_data_frame(rows:list) -> DataFrame: 
+def create_data_frame(rows:list): 
     """add list of records into a pandas dataframe """
     column_names = ["Series","Record"]
 
@@ -36,17 +36,19 @@ def create_data_frame(rows:list) -> DataFrame:
 
     return df
 
-def save_df_to_csv(df:DataFrame) :
+def save_df_to_csv(df) :
     """save dataframe containing records into a csv file """
     return df.to_csv('blue_note_discography.csv')
      
 
 def main():
     url: str = "https://en.wikipedia.org/wiki/Blue_Note_Records_discography"
+    print("Starting scraping of Blue Note discography")
     soup = get_data(url)
     rows = get_record_entries(soup)
     df = create_data_frame(rows)
     save_df_to_csv(df)
+    print("Script complete")
 
 if __name__ == "__main__":
     main()
@@ -55,7 +57,6 @@ if __name__ == "__main__":
 TODO:
 
 0) create virtual env 
-00) try/except block for scrape
 1) documentation and type hinting
 2) swap for loop for list comprehension
 3) extract more data for each record
